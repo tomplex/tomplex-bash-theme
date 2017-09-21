@@ -1,3 +1,10 @@
+# tomplex.theme.bash 
+# Heavily inspired by this StackOverflow answer:
+# https://stackoverflow.com/a/34812608/4453925
+# Changes were mostly to colors, plus added support for Python virtualenv names
+
+
+
 function timer_now {
     date +%s%N
 }
