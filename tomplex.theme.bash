@@ -3,7 +3,15 @@
 # https://stackoverflow.com/a/34812608/4453925
 # Changes were mostly to colors, plus added support for Python virtualenv names
 
-
+# Colors
+Blue='\[\e[01;34m\]'
+White='\[\e[01;37m\]'
+Red='\[\e[01;31m\]'
+Green='\[\e[01;32m\]'
+Reset='\[\e[00m\]'
+FancyX='\342\234\227'
+Checkmark='\342\234\223'
+Arrow='➙'
 
 function timer_now {
     date +%s%N
@@ -33,18 +41,19 @@ function timer_stop {
 }
 
 __check_virtualenv() {
-    [[ -n $VIRTUAL_ENV ]] && printf "($(basename $VIRTUAL_ENV)) "
+    [[ -n $VIRTUAL_ENV ]] && printf "py:($(basename $VIRTUAL_ENV)) "
+}
+
+__check_git() {
+    [[ -n $(__git_ps1) ]] && printf "$White git:($Red$(__git_ps1 '%s')$White)"
+}
+
+__git_dirty() {
+    ( [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && printf " $Red$FancyX" ) || ( [[ -n $(__git_ps1) ]] && printf " $Green$Checkmark" ) 
 }
 
 set_prompt () {
     Last_Command=$? # Must come first!
-    Blue='\[\e[01;34m\]'
-    White='\[\e[01;37m\]'
-    Red='\[\e[01;31m\]'
-    Green='\[\e[01;32m\]'
-    Reset='\[\e[00m\]'
-    FancyX='\342\234\227'
-    Checkmark='\342\234\223'
 
     # Add a bright white exit status for the last command
     PS1="$White\$? "
@@ -56,20 +65,19 @@ set_prompt () {
         PS1+="$Red$FancyX "
     fi
 
-    # Add the ellapsed time and current date
+    # Add the elapsed time and current date
     timer_stop
     PS1+="($timer_show) $White\t "
+    
+    # check for a virtualenv
+    PS1+="$Green$(__check_virtualenv)"
+    
+    # add working directory
+    PS1+="$Blue\\w"
 
-    # If root, just print the host in red. Otherwise, print the current user
-    # and host in green.
-    if [[ $EUID == 0 ]]; then
-        PS1+="$Red\\u${Blue}@\\h "
-    else
-        PS1+="${Blue}\\u@\\h "
-    fi
-    # Print the working directory and prompt marker in blue, and reset
-    # the text color to the default.
-    PS1+="$White$(__check_virtualenv)$Blue\\w\n\\\$$White "
+    # check for a git repository / branch
+    PS1+="$(__check_git)$(__git_dirty)\n"
+    PS1+="$Blue$Arrow $Reset"
 }
 
 trap 'timer_start' DEBUG
