@@ -11,7 +11,7 @@ A theme for your bash prompt.
 - current time
 - show `$PWD`
 - git integration: shows the current branch if you're in a git repo, and a green checkmark or red x if your branch has uncommitted changes.
-- python `virtualenv` integration - will show the name of the active  `virtualenv`.
+- python `virtualenv` integration: will show the name of the active  `virtualenv`.
 
 ### Installation
 
