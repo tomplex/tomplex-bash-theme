@@ -41,7 +41,7 @@ function timer_stop {
 }
 
 __check_virtualenv() {
-    [[ -n $VIRTUAL_ENV ]] && printf "py:($(basename $VIRTUAL_ENV)) "
+    [[ -n $VIRTUAL_ENV ]] && printf "$White py:($Red$(basename $VIRTUAL_ENV)$White)"
 }
 
 __check_git() {
@@ -69,11 +69,13 @@ set_prompt () {
     timer_stop
     PS1+="($timer_show) $White\t "
     
-    # check for a virtualenv
-    PS1+="$Green$(__check_virtualenv)"
-    
+    PS1+="$Red\\u$White@\\h " 
+     
     # add working directory
     PS1+="$Blue\\w"
+
+    # check for a virtualenv
+    PS1+="$Green$(__check_virtualenv)"
 
     # check for a git repository / branch
     PS1+="$(__check_git)$(__git_dirty)\n"
